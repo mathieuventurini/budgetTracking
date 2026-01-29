@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Plus, Pencil, Trash2, Check, X } from 'lucide-react';
+import { ShoppingBag, Plus, Pencil, Check, X } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -200,17 +200,16 @@ export const ExceptionalExpensesList: React.FC = () => {
                     >
                       <Pencil size={16} />
                     </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
+                    <button
                       onClick={() => {
                         setExpenseToDelete({ id: expense.id, description: expense.description, amount: expense.amount });
                         setDeleteDialogOpen(true);
                       }}
-                      className="!px-3"
+                      className="p-2 text-gray-400 hover:text-gray-700 transition-colors rounded-lg hover:bg-gray-100"
+                      title="Supprimer"
                     >
-                      <Trash2 size={16} />
-                    </Button>
+                      <X size={16} />
+                    </button>
                   </div>
                 </div>
               )}

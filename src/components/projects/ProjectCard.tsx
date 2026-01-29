@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pencil, Trash2, Pause, PlayCircle, CheckCircle, Check, X } from 'lucide-react';
+import { Pencil, Pause, PlayCircle, CheckCircle, Check, X } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
@@ -85,14 +85,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           >
             <Pencil size={16} />
           </Button>
-          <Button
-            variant="danger"
-            size="sm"
+          <button
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="!px-2.5"
+            className="p-2 text-gray-400 hover:text-gray-700 transition-colors rounded-lg hover:bg-gray-100"
+            title="Supprimer"
           >
-            <Trash2 size={16} />
-          </Button>
+            <X size={16} />
+          </button>
         </div>
       </div>
 
