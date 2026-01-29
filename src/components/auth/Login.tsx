@@ -3,6 +3,7 @@ import { Lock, Mail } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { ALLOWED_EMAILS } from '../../utils/constants';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -20,6 +21,14 @@ export function Login() {
 
     try {
       if (isRegistering) {
+        // Vérifier si l'email est autorisé pour l'inscription
+        if (!ALLOWED_EMAILS.includes(email as any)) {
+          setLocalError(
+            'Cet email n\'est pas autorisé. Seuls Mathieu et Assia peuvent créer un compte.'
+          );
+          setIsSubmitting(false);
+          return;
+        }
         await register(email, password);
       } else {
         await login(email, password);
@@ -140,8 +149,10 @@ export function Login() {
         {isRegistering && (
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-xs text-blue-800">
-              <strong>Pour partager le budget :</strong><br />
-              Créez un compte avec le même email que votre conjoint(e) pour accéder aux mêmes données.
+              <strong>Budget familial privé</strong><br />
+              Seuls les emails autorisés peuvent créer un compte :<br />
+              • mathieu.venturini@gmail.com<br />
+              • assiap1@outlook.fr
             </p>
           </div>
         )}

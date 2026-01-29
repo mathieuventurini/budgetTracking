@@ -30,3 +30,9 @@ export const STATUS_COLORS: Record<string, string> = {
 };
 
 export const MONTHS_TO_KEEP = 6;
+
+// Emails autorisés pour la création de compte
+export const ALLOWED_EMAILS = [
+  'mathieu.venturini@gmail.com',
+  'assiap1@outlook.fr',
+] as const;
