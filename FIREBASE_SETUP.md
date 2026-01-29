@@ -58,13 +58,16 @@ service cloud.firestore {
 
 ## 🔐 Étape 2 : Variables d'environnement (déjà configuré)
 
-Le fichier `.env` est déjà créé avec vos clés Firebase. Vérifiez qu'il contient bien :
+Créez un fichier `.env` à la racine du projet avec vos clés Firebase :
 
 ```bash
-VITE_FIREBASE_API_KEY=AIzaSyCP1pCRIQveGariIAABAILfNJcOUmv9t04
-VITE_FIREBASE_AUTH_DOMAIN=budget-tracking-56e6e.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=budget-tracking-56e6e
-# ... etc
+VITE_FIREBASE_API_KEY=votre_api_key_ici
+VITE_FIREBASE_AUTH_DOMAIN=votre_projet.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=votre_projet_id
+VITE_FIREBASE_STORAGE_BUCKET=votre_projet.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=votre_sender_id
+VITE_FIREBASE_APP_ID=votre_app_id
+VITE_FIREBASE_MEASUREMENT_ID=votre_measurement_id
 ```
 
 **Important** : Ce fichier `.env` est dans le `.gitignore`, donc il ne sera pas versionné sur Git.

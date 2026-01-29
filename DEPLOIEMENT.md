@@ -61,7 +61,7 @@ Votre application sera accessible publiquement à cette adresse.
 **Important** : Les variables d'environnement (`.env`) sont **intégrées dans le build**.
 
 Lorsque vous exécutez `npm run build`, Vite remplace automatiquement :
-- `import.meta.env.VITE_FIREBASE_API_KEY` → `"AIzaSyCP1pCRIQveGariIAABAILfNJcOUmv9t04"`
+- `import.meta.env.VITE_FIREBASE_API_KEY` → `"votre-clé-api-firebase"`
 - Etc.
 
 Les clés sont donc **dans le code JavaScript** en production. C'est normal pour Firebase (les clés sont publiques, la sécurité se fait via les règles Firestore).
