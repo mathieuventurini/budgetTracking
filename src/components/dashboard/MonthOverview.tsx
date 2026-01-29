@@ -36,14 +36,14 @@ export const MonthOverview: React.FC = () => {
       bgColor: 'bg-warning/10',
     },
     {
-      label: 'Dépenses exceptionnelles',
+      label: 'Dépenses',
       value: totalExceptionalExpenses,
       icon: <ShoppingBag size={24} />,
       color: 'text-danger',
       bgColor: 'bg-danger/10',
     },
     {
-      label: 'Projets alloués',
+      label: 'Projets',
       value: totalProjectsAllocated,
       icon: <FolderKanban size={24} />,
       color: 'text-primary',
@@ -54,16 +54,14 @@ export const MonthOverview: React.FC = () => {
   return (
     <div className="space-y-4">
       {/* Summary cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {cards.map((card, index) => (
-          <Card key={index} className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                <div className={card.color}>{card.icon}</div>
-              </div>
+          <Card key={index} className="flex flex-col items-center justify-center text-center p-6 space-y-4">
+            <div className={`p-3 rounded-lg ${card.bgColor}`}>
+              <div className={card.color}>{card.icon}</div>
             </div>
-            <div>
-              <p className="text-sm text-textLight">{card.label}</p>
+            <div className="space-y-1">
+              <p className="text-sm text-textLight font-medium">{card.label}</p>
               <p className={`text-2xl font-bold ${card.color}`}>
                 {formatCurrency(card.value)}
               </p>

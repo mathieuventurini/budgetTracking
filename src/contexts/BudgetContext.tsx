@@ -29,7 +29,7 @@ interface BudgetContextType {
   updateFixedCharge: (id: string, description: string, amount: number) => void;
   deleteFixedCharge: (id: string) => void;
 
-  // CRUD Dépenses exceptionnelles
+  // CRUD Dépenses
   addExceptionalExpense: (description: string, amount: number, date: string) => void;
   updateExceptionalExpense: (id: string, description: string, amount: number, date: string) => void;
   deleteExceptionalExpense: (id: string) => void;
@@ -119,7 +119,7 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
     });
   };
 
-  // CRUD Dépenses exceptionnelles
+  // CRUD Dépenses
   const addExceptionalExpense = (description: string, amount: number, date: string) => {
     if (!monthlyData) return;
 

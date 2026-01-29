@@ -64,12 +64,12 @@ export const ExceptionalExpensesList: React.FC = () => {
           <div className="p-3 bg-gradient-to-br from-danger/20 to-rose-200/30 rounded-xl shadow-sm">
             <ShoppingBag className="text-danger" size={24} />
           </div>
-          <h2 className="text-xl font-bold text-text">Dépenses exceptionnelles</h2>
+          <h2 className="text-xl font-bold text-text">Dépenses</h2>
         </div>
         <button
           onClick={() => setIsAdding(true)}
           className="group relative p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-          title="Ajouter une dépense exceptionnelle"
+          title="Ajouter une dépense"
         >
           <Plus size={24} className="transition-transform duration-300 group-hover:rotate-90" />
         </button>
@@ -126,7 +126,7 @@ export const ExceptionalExpensesList: React.FC = () => {
         {sortedExpenses.length === 0 ? (
           <div className="text-center py-8 text-textLight">
             <ShoppingBag size={48} className="mx-auto mb-2 opacity-20" />
-            <p>Aucune dépense exceptionnelle pour le moment</p>
+            <p>Aucune dépense pour le moment</p>
           </div>
         ) : (
           sortedExpenses.map((expense) => (
@@ -216,7 +216,7 @@ export const ExceptionalExpensesList: React.FC = () => {
       {sortedExpenses.length > 0 && (
         <div className="pt-4 border-t border-gray-200">
           <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold text-text">Total dépenses exceptionnelles</span>
+            <span className="text-lg font-semibold text-text">Total dépenses</span>
             <span className="text-2xl font-bold text-danger">
               {formatCurrency(total)}
             </span>

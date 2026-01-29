@@ -22,7 +22,7 @@ export const calculateTotalFixedCharges = (charges: FixedCharge[]): number => {
 };
 
 /**
- * Calcule le total des dépenses exceptionnelles
+ * Calcule le total des dépenses
  */
 export const calculateTotalExceptionalExpenses = (expenses: ExceptionalExpense[]): number => {
   return expenses.reduce((sum, expense) => sum + expense.amount, 0);
