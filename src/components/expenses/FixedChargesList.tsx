@@ -47,13 +47,13 @@ export const FixedChargesList: React.FC = () => {
 
       <div className="space-y-2">
         {isAdding && (
-          <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg border-2 border-primary">
+          <div className="p-3 bg-primary/5 rounded-lg border-2 border-primary space-y-2">
             <Input
               type="text"
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder="Description (ex: Loyer, Électricité...)"
-              className="flex-1"
+              fullWidth
             />
             <Input
               type="number"
@@ -62,22 +62,25 @@ export const FixedChargesList: React.FC = () => {
               placeholder="Montant"
               step="0.01"
               min="0"
-              className="w-32"
+              fullWidth
             />
-            <Button variant="success" size="sm" onClick={handleAdd}>
-              Ajouter
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                setIsAdding(false);
-                setNewDescription('');
-                setNewAmount('');
-              }}
-            >
-              Annuler
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="success" size="sm" onClick={handleAdd} fullWidth>
+                Ajouter
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  setIsAdding(false);
+                  setNewDescription('');
+                  setNewAmount('');
+                }}
+                fullWidth
+              >
+                Annuler
+              </Button>
+            </div>
           </div>
         )}
 
