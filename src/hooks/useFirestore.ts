@@ -24,7 +24,7 @@ const getPreviousMonth = (month: string): string => {
 
 /**
  * Crée des données mensuelles vides pour un mois donné
- * Si le mois précédent existe, copie ses projets
+ * Si le mois précédent existe, copie ses projets et charges fixes
  */
 const createEmptyMonthlyData = async (
   month: string,
@@ -32,17 +32,30 @@ const createEmptyMonthlyData = async (
 ): Promise<MonthlyData> => {
   const now = new Date().toISOString();
 
-  // Tente de récupérer les projets du mois précédent
+  // Tente de récupérer les données du mois précédent
   let projectsFromPreviousMonth: Project[] = [];
+  let fixedChargesFromPreviousMonth: any[] = [];
+
   if (loadPreviousMonthData) {
     const previousMonth = getPreviousMonth(month);
     const previousData = await loadPreviousMonthData(previousMonth);
-    if (previousData && previousData.projects.length > 0) {
+
+    if (previousData) {
       // Copie les projets mais réinitialise l'allocation mensuelle à 0
-      projectsFromPreviousMonth = previousData.projects.map(project => ({
-        ...project,
-        monthlyAllocation: 0,
-      }));
+      if (previousData.projects.length > 0) {
+        projectsFromPreviousMonth = previousData.projects.map(project => ({
+          ...project,
+          monthlyAllocation: 0,
+        }));
+      }
+
+      // Copie les charges fixes avec leurs montants
+      if (previousData.fixedCharges.length > 0) {
+        fixedChargesFromPreviousMonth = previousData.fixedCharges.map(charge => ({
+          ...charge,
+          id: uuidv4(), // Nouveau ID pour le nouveau mois
+        }));
+      }
     }
   }
 
@@ -53,7 +66,7 @@ const createEmptyMonthlyData = async (
       { id: uuidv4(), name: 'Salaire Mathieu', amount: 0 },
       { id: uuidv4(), name: 'Salaire Assia', amount: 0 },
     ],
-    fixedCharges: [],
+    fixedCharges: fixedChargesFromPreviousMonth,
     exceptionalExpenses: [],
     projects: projectsFromPreviousMonth,
     createdAt: now,

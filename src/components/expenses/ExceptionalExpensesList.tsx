@@ -3,6 +3,7 @@ import { ShoppingBag, Plus, Pencil, Trash2, Check, X } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useBudget } from '../../contexts/BudgetContext';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
@@ -16,6 +17,8 @@ export const ExceptionalExpensesList: React.FC = () => {
   const [editDescription, setEditDescription] = useState('');
   const [editAmount, setEditAmount] = useState('');
   const [editDate, setEditDate] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<{ id: string; description: string; amount: number } | null>(null);
 
   const handleAdd = () => {
     if (newDescription.trim() && newAmount && newDate) {
@@ -200,7 +203,10 @@ export const ExceptionalExpensesList: React.FC = () => {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => deleteExceptionalExpense(expense.id)}
+                      onClick={() => {
+                        setExpenseToDelete({ id: expense.id, description: expense.description, amount: expense.amount });
+                        setDeleteDialogOpen(true);
+                      }}
                       className="!px-3"
                     >
                       <Trash2 size={16} />
@@ -212,6 +218,24 @@ export const ExceptionalExpensesList: React.FC = () => {
           ))
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setExpenseToDelete(null);
+        }}
+        onConfirm={() => {
+          if (expenseToDelete) {
+            deleteExceptionalExpense(expenseToDelete.id);
+          }
+        }}
+        title="Supprimer cette dépense ?"
+        message={expenseToDelete ? `Êtes-vous sûr de vouloir supprimer "${expenseToDelete.description}" (${formatCurrency(expenseToDelete.amount)}) ?` : ''}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        variant="danger"
+      />
 
       {sortedExpenses.length > 0 && (
         <div className="pt-4 border-t border-gray-200">

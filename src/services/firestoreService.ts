@@ -17,10 +17,57 @@ const BUDGET_COLLECTION = 'budgetData';
 const SHARED_ACCOUNT_ID = 'mathieu-assia-account'; // Shared account ID
 
 /**
- * Creates default monthly data structure
+ * Gets the previous month in YYYY-MM format
  */
-const createDefaultMonthData = (month: string): MonthlyData => {
+const getPreviousMonth = (month: string): string => {
+  const [year, monthNum] = month.split('-').map(Number);
+  const date = new Date(year, monthNum - 1, 1);
+  date.setMonth(date.getMonth() - 1);
+
+  const prevYear = date.getFullYear();
+  const prevMonth = String(date.getMonth() + 1).padStart(2, '0');
+  return `${prevYear}-${prevMonth}`;
+};
+
+/**
+ * Creates default monthly data structure
+ * If previous month exists, copies fixed charges and projects
+ */
+const createDefaultMonthData = async (month: string): Promise<MonthlyData> => {
   const now = new Date().toISOString();
+
+  // Try to load previous month data
+  let fixedChargesFromPreviousMonth: any[] = [];
+  let projectsFromPreviousMonth: any[] = [];
+
+  try {
+    const previousMonth = getPreviousMonth(month);
+    const previousDocRef = getMonthDocRef(previousMonth);
+    const previousDocSnap = await getDoc(previousDocRef);
+
+    if (previousDocSnap.exists()) {
+      const previousData = previousDocSnap.data();
+
+      // Copy fixed charges with same amounts
+      if (previousData.fixedCharges && previousData.fixedCharges.length > 0) {
+        fixedChargesFromPreviousMonth = previousData.fixedCharges.map((charge: any) => ({
+          ...charge,
+          id: `charge-${Date.now()}-${Math.random()}`,
+        }));
+      }
+
+      // Copy projects with monthly allocation reset to 0
+      if (previousData.projects && previousData.projects.length > 0) {
+        projectsFromPreviousMonth = previousData.projects.map((project: any) => ({
+          ...project,
+          monthlyAllocation: 0,
+        }));
+      }
+    }
+  } catch (error) {
+    console.log('Could not load previous month data, starting fresh');
+  }
+
   return {
     id: `${month}-${Date.now()}`,
     month,
@@ -28,9 +75,9 @@ const createDefaultMonthData = (month: string): MonthlyData => {
       { id: `salary-1-${Date.now()}`, name: 'Salaire Mathieu', amount: 0 },
       { id: `salary-2-${Date.now()}`, name: 'Salaire Assia', amount: 0 },
     ] as Salary[],
-    fixedCharges: [],
+    fixedCharges: fixedChargesFromPreviousMonth,
     exceptionalExpenses: [],
-    projects: [],
+    projects: projectsFromPreviousMonth,
     createdAt: now,
     updatedAt: now,
   };
@@ -66,15 +113,15 @@ export const loadMonthDataFromFirestore = async (
           : data.updatedAt,
       } as MonthlyData;
     } else {
-      // Create default data for new month
-      const defaultData = createDefaultMonthData(month);
+      // Create default data for new month (copies from previous month)
+      const defaultData = await createDefaultMonthData(month);
       await saveMonthDataToFirestore(month, defaultData);
       return defaultData;
     }
   } catch (error) {
     console.error('Error loading month data from Firestore:', error);
     // Fallback to default data
-    return createDefaultMonthData(month);
+    return await createDefaultMonthData(month);
   }
 };
 

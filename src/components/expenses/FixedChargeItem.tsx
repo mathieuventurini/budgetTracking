@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Pencil, Trash2, Check, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { formatCurrency } from '../../utils/formatters';
 
 interface FixedChargeItemProps {
@@ -20,6 +21,7 @@ export const FixedChargeItem: React.FC<FixedChargeItemProps> = ({
   onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editDescription, setEditDescription] = useState(description);
   const [editAmount, setEditAmount] = useState(amount.toString());
 
@@ -92,12 +94,23 @@ export const FixedChargeItem: React.FC<FixedChargeItemProps> = ({
         <Button
           variant="danger"
           size="sm"
-          onClick={() => onDelete(id)}
+          onClick={() => setIsDeleteDialogOpen(true)}
           className="!px-3"
         >
           <Trash2 size={16} />
         </Button>
       </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={() => onDelete(id)}
+        title="Supprimer cette charge fixe ?"
+        message={`Êtes-vous sûr de vouloir supprimer "${description}" (${formatCurrency(amount)}) ?`}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        variant="danger"
+      />
     </div>
   );
 };

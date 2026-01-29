@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Pencil, Trash2, Pause, PlayCircle, CheckCircle, Check, X } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import type { Project, ProjectStatus } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
 import { STATUS_LABELS, STATUS_COLORS } from '../../utils/constants';
@@ -23,6 +24,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 }) => {
   const [isEditingAllocation, setIsEditingAllocation] = useState(false);
   const [tempAllocation, setTempAllocation] = useState('');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleStartEdit = () => {
     setTempAllocation(project.monthlyAllocation.toString());
@@ -86,13 +88,24 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           <Button
             variant="danger"
             size="sm"
-            onClick={() => onDelete(project)}
+            onClick={() => setIsDeleteDialogOpen(true)}
             className="!px-2.5"
           >
             <Trash2 size={16} />
           </Button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={() => onDelete(project)}
+        title="Supprimer ce projet ?"
+        message={`Êtes-vous sûr de vouloir supprimer le projet "${project.name}" (${formatCurrency(project.totalBudget)}) ?`}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        variant="danger"
+      />
 
       {/* Budget total */}
       <div className="text-center p-3 bg-primary/5 rounded-lg">
