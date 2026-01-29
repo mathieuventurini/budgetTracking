@@ -8,11 +8,10 @@ import { STATUS_LABELS } from '../../utils/constants';
 interface ProjectFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (name: string, totalBudget: number, totalSpent: number, monthlyAllocation: number, status: ProjectStatus) => void;
+  onSubmit: (name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => void;
   initialData?: {
     name: string;
     totalBudget: number;
-    totalSpent: number;
     monthlyAllocation: number;
     status: ProjectStatus;
   };
@@ -28,7 +27,6 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [totalBudget, setTotalBudget] = useState('');
-  const [totalSpent, setTotalSpent] = useState('');
   const [monthlyAllocation, setMonthlyAllocation] = useState('');
   const [status, setStatus] = useState<ProjectStatus>('en-cours');
 
@@ -36,13 +34,11 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     if (initialData) {
       setName(initialData.name);
       setTotalBudget(initialData.totalBudget.toString());
-      setTotalSpent(initialData.totalSpent.toString());
       setMonthlyAllocation(initialData.monthlyAllocation.toString());
       setStatus(initialData.status);
     } else {
       setName('');
       setTotalBudget('');
-      setTotalSpent('0');
       setMonthlyAllocation('0');
       setStatus('en-cours');
     }
@@ -53,10 +49,9 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 
     if (name.trim() && totalBudget) {
       const numTotalBudget = parseFloat(totalBudget.replace(',', '.').replace(/\s/g, '')) || 0;
-      const numTotalSpent = parseFloat(totalSpent.replace(',', '.').replace(/\s/g, '')) || 0;
       const numMonthlyAllocation = parseFloat(monthlyAllocation.replace(',', '.').replace(/\s/g, '')) || 0;
 
-      onSubmit(name.trim(), numTotalBudget, numTotalSpent, numMonthlyAllocation, status);
+      onSubmit(name.trim(), numTotalBudget, numMonthlyAllocation, status);
       onClose();
     }
   };
@@ -87,21 +82,6 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         />
         <p className="text-xs text-textLight -mt-2">
           Le budget total ne touche pas votre reste à vivre
-        </p>
-
-        <Input
-          type="number"
-          label={initialData ? "Total déjà dépensé (€)" : "Total déjà alloué (€)"}
-          value={totalSpent}
-          onChange={(e) => setTotalSpent(e.target.value)}
-          placeholder="0.00"
-          step="0.01"
-          min="0"
-          required
-          fullWidth
-        />
-        <p className="text-xs text-textLight -mt-2">
-          {initialData ? "Cumulé sur tous les mois précédents" : "Montant déjà alloué pour ce projet"}
         </p>
 
         <Input

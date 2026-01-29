@@ -35,8 +35,8 @@ interface BudgetContextType {
   deleteExceptionalExpense: (id: string) => void;
 
   // CRUD Projets
-  addProject: (name: string, totalBudget: number, totalSpent: number, monthlyAllocation: number, status: ProjectStatus) => void;
-  updateProject: (id: string, name: string, totalBudget: number, totalSpent: number, monthlyAllocation: number, status: ProjectStatus) => void;
+  addProject: (name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => void;
+  updateProject: (id: string, name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => void;
   updateProjectAllocation: (id: string, monthlyAllocation: number) => void;
   updateProjectStatus: (id: string, status: ProjectStatus) => void;
   deleteProject: (id: string) => void;
@@ -162,7 +162,6 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
   const addProject = (
     name: string,
     totalBudget: number,
-    totalSpent: number,
     monthlyAllocation: number,
     status: ProjectStatus
   ) => {
@@ -172,7 +171,6 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
       id: uuidv4(),
       name,
       totalBudget,
-      totalSpent,
       monthlyAllocation,
       status,
       createdAt: new Date().toISOString(),
@@ -188,7 +186,6 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
     id: string,
     name: string,
     totalBudget: number,
-    totalSpent: number,
     monthlyAllocation: number,
     status: ProjectStatus
   ) => {
@@ -196,7 +193,7 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
 
     const updatedProjects = monthlyData.projects.map(project =>
       project.id === id
-        ? { ...project, name, totalBudget, totalSpent, monthlyAllocation, status }
+        ? { ...project, name, totalBudget, monthlyAllocation, status }
         : project
     );
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Pencil, Trash2, Pause, PlayCircle, CheckCircle, Check, X } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { ProgressBar } from '../ui/ProgressBar';
 import type { Project, ProjectStatus } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
 import { STATUS_LABELS, STATUS_COLORS } from '../../utils/constants';
@@ -25,11 +24,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   const [isEditingAllocation, setIsEditingAllocation] = useState(false);
   const [tempAllocation, setTempAllocation] = useState('');
 
-  const remaining = project.totalBudget - project.totalSpent;
-  const percentage = project.totalBudget > 0
-    ? Math.min((project.totalSpent / project.totalBudget) * 100, 100)
-    : 0;
-
   const handleStartEdit = () => {
     setTempAllocation(project.monthlyAllocation.toString());
     setIsEditingAllocation(true);
@@ -46,12 +40,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   const handleCancelEdit = () => {
     setIsEditingAllocation(false);
     setTempAllocation('');
-  };
-
-  const getProgressColor = (): 'success' | 'warning' | 'danger' => {
-    if (percentage < 75) return 'success';
-    if (percentage < 95) return 'warning';
-    return 'danger';
   };
 
   const cycleStatus = () => {
@@ -106,33 +94,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div>
-        <div className="flex justify-between text-xs text-textLight mb-1">
-          <span>Progression du projet</span>
-          <span>{formatCurrency(project.totalSpent)} / {formatCurrency(project.totalBudget)}</span>
-        </div>
-        <ProgressBar
-          value={project.totalSpent}
-          max={project.totalBudget}
-          color={getProgressColor()}
-          height="lg"
-        />
-        <p className="text-xs text-textLight text-right mt-1">
-          {percentage.toFixed(0)}% réalisé
-        </p>
-      </div>
-
-      {/* Amounts */}
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="text-center p-2 bg-primary/5 rounded-lg">
-          <p className="text-textLight text-xs">Budget total</p>
-          <p className="font-semibold text-primary">{formatCurrency(project.totalBudget)}</p>
-        </div>
-        <div className="text-center p-2 bg-success/5 rounded-lg">
-          <p className="text-textLight text-xs">Restant</p>
-          <p className="font-semibold text-success">{formatCurrency(remaining)}</p>
-        </div>
+      {/* Budget total */}
+      <div className="text-center p-3 bg-primary/5 rounded-lg">
+        <p className="text-textLight text-xs mb-1">Budget total</p>
+        <p className="text-2xl font-bold text-primary">{formatCurrency(project.totalBudget)}</p>
       </div>
 
       {/* Monthly allocation */}

@@ -13,8 +13,8 @@ export const ProjectsList: React.FC = () => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deletingProject, setDeletingProject] = useState<Project | null>(null);
 
-  const handleAdd = (name: string, totalBudget: number, totalSpent: number, monthlyAllocation: number, status: any) => {
-    addProject(name, totalBudget, totalSpent, monthlyAllocation, status);
+  const handleAdd = (name: string, totalBudget: number, monthlyAllocation: number, status: any) => {
+    addProject(name, totalBudget, monthlyAllocation, status);
   };
 
   const handleEdit = (project: Project) => {
@@ -22,9 +22,9 @@ export const ProjectsList: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleUpdate = (name: string, totalBudget: number, totalSpent: number, monthlyAllocation: number, status: any) => {
+  const handleUpdate = (name: string, totalBudget: number, monthlyAllocation: number, status: any) => {
     if (editingProject) {
-      updateProject(editingProject.id, name, totalBudget, totalSpent, monthlyAllocation, status);
+      updateProject(editingProject.id, name, totalBudget, monthlyAllocation, status);
       setEditingProject(null);
     }
   };
@@ -95,7 +95,6 @@ export const ProjectsList: React.FC = () => {
         initialData={editingProject ? {
           name: editingProject.name,
           totalBudget: editingProject.totalBudget,
-          totalSpent: editingProject.totalSpent,
           monthlyAllocation: editingProject.monthlyAllocation,
           status: editingProject.status,
         } : undefined}

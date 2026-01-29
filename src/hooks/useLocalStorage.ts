@@ -37,7 +37,11 @@ const createEmptyMonthlyData = (month: string, loadPreviousMonthData?: (month: s
     const previousMonth = getPreviousMonth(month);
     const previousData = loadPreviousMonthData(previousMonth);
     if (previousData && previousData.projects.length > 0) {
-      projectsFromPreviousMonth = previousData.projects;
+      // Copie les projets mais réinitialise l'allocation mensuelle à 0
+      projectsFromPreviousMonth = previousData.projects.map(project => ({
+        ...project,
+        monthlyAllocation: 0,
+      }));
     }
   }
 

@@ -36,13 +36,6 @@ export const calculateTotalProjectsAllocated = (projects: Project[]): number => 
 };
 
 /**
- * Calcule le total des montants dépensés sur les projets (tous les mois cumulés)
- */
-export const calculateTotalProjectsSpent = (projects: Project[]): number => {
-  return projects.reduce((sum, project) => sum + project.totalSpent, 0);
-};
-
-/**
  * Calcule le reste à vivre
  */
 export const calculateRestToLive = (
@@ -94,7 +87,6 @@ export const calculateBudget = (
   const totalFixedCharges = calculateTotalFixedCharges(fixedCharges);
   const totalExceptionalExpenses = calculateTotalExceptionalExpenses(exceptionalExpenses);
   const totalProjectsAllocated = calculateTotalProjectsAllocated(projects);
-  const totalProjectsSpent = calculateTotalProjectsSpent(projects);
   const restToLive = calculateRestToLive(
     totalIncome,
     totalFixedCharges,
@@ -109,7 +101,6 @@ export const calculateBudget = (
     totalFixedCharges,
     totalExceptionalExpenses,
     totalProjectsAllocated,
-    totalProjectsSpent,
     restToLive,
     colorStatus,
     percentageRemaining,

@@ -23,7 +23,6 @@ export interface Project {
   id: string;
   name: string;
   totalBudget: number;          // Budget total du projet (n'impacte pas le reste à vivre)
-  totalSpent: number;            // Total dépensé sur tous les mois
   monthlyAllocation: number;     // Montant alloué ce mois (impacte le reste à vivre)
   status: ProjectStatus;
   createdAt: string;
@@ -45,7 +44,6 @@ export interface BudgetCalculations {
   totalFixedCharges: number;
   totalExceptionalExpenses: number;
   totalProjectsAllocated: number;
-  totalProjectsSpent: number;
   restToLive: number;
   colorStatus: 'success' | 'warning' | 'danger';
   percentageRemaining: number;
