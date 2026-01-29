@@ -8,7 +8,7 @@ import type {
   BudgetCalculations,
   ProjectStatus,
 } from '../types';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useFirestore } from '../hooks/useFirestore';
 import { useBudgetCalculations } from '../hooks/useBudgetCalculations';
 
 interface BudgetContextType {
@@ -16,30 +16,32 @@ interface BudgetContextType {
   currentMonth: string;
   monthlyData: MonthlyData | null;
   calculations: BudgetCalculations;
+  loading: boolean;
+  error: string | null;
 
   // Navigation
   changeMonth: (month: string) => void;
-  getHistory: (n?: number) => MonthlyData[];
+  getHistory: (n?: number) => Promise<MonthlyData[]>;
 
   // CRUD Salaires
-  updateSalary: (id: string, amount: number) => void;
+  updateSalary: (id: string, amount: number) => Promise<void>;
 
   // CRUD Charges fixes
-  addFixedCharge: (description: string, amount: number) => void;
-  updateFixedCharge: (id: string, description: string, amount: number) => void;
-  deleteFixedCharge: (id: string) => void;
+  addFixedCharge: (description: string, amount: number) => Promise<void>;
+  updateFixedCharge: (id: string, description: string, amount: number) => Promise<void>;
+  deleteFixedCharge: (id: string) => Promise<void>;
 
   // CRUD Dépenses
-  addExceptionalExpense: (description: string, amount: number, date: string) => void;
-  updateExceptionalExpense: (id: string, description: string, amount: number, date: string) => void;
-  deleteExceptionalExpense: (id: string) => void;
+  addExceptionalExpense: (description: string, amount: number, date: string) => Promise<void>;
+  updateExceptionalExpense: (id: string, description: string, amount: number, date: string) => Promise<void>;
+  deleteExceptionalExpense: (id: string) => Promise<void>;
 
   // CRUD Projets
-  addProject: (name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => void;
-  updateProject: (id: string, name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => void;
-  updateProjectAllocation: (id: string, monthlyAllocation: number) => void;
-  updateProjectStatus: (id: string, status: ProjectStatus) => void;
-  deleteProject: (id: string) => void;
+  addProject: (name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => Promise<void>;
+  updateProject: (id: string, name: string, totalBudget: number, monthlyAllocation: number, status: ProjectStatus) => Promise<void>;
+  updateProjectAllocation: (id: string, monthlyAllocation: number) => Promise<void>;
+  updateProjectStatus: (id: string, status: ProjectStatus) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
@@ -63,26 +65,28 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
     saveMonthData,
     changeMonth,
     getHistory,
-  } = useLocalStorage();
+    loading,
+    error,
+  } = useFirestore();
 
   const calculations = useBudgetCalculations(monthlyData);
 
   // CRUD Salaires
-  const updateSalary = (id: string, amount: number) => {
+  const updateSalary = async (id: string, amount: number) => {
     if (!monthlyData) return;
 
     const updatedSalaries = monthlyData.salaries.map(salary =>
       salary.id === id ? { ...salary, amount } : salary
     );
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       salaries: updatedSalaries,
     });
   };
 
   // CRUD Charges fixes
-  const addFixedCharge = (description: string, amount: number) => {
+  const addFixedCharge = async (description: string, amount: number) => {
     if (!monthlyData) return;
 
     const newCharge: FixedCharge = {
@@ -91,36 +95,36 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
       amount,
     };
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       fixedCharges: [...monthlyData.fixedCharges, newCharge],
     });
   };
 
-  const updateFixedCharge = (id: string, description: string, amount: number) => {
+  const updateFixedCharge = async (id: string, description: string, amount: number) => {
     if (!monthlyData) return;
 
     const updatedCharges = monthlyData.fixedCharges.map(charge =>
       charge.id === id ? { ...charge, description, amount } : charge
     );
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       fixedCharges: updatedCharges,
     });
   };
 
-  const deleteFixedCharge = (id: string) => {
+  const deleteFixedCharge = async (id: string) => {
     if (!monthlyData) return;
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       fixedCharges: monthlyData.fixedCharges.filter(charge => charge.id !== id),
     });
   };
 
   // CRUD Dépenses
-  const addExceptionalExpense = (description: string, amount: number, date: string) => {
+  const addExceptionalExpense = async (description: string, amount: number, date: string) => {
     if (!monthlyData) return;
 
     const newExpense: ExceptionalExpense = {
@@ -130,36 +134,36 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
       date,
     };
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       exceptionalExpenses: [...monthlyData.exceptionalExpenses, newExpense],
     });
   };
 
-  const updateExceptionalExpense = (id: string, description: string, amount: number, date: string) => {
+  const updateExceptionalExpense = async (id: string, description: string, amount: number, date: string) => {
     if (!monthlyData) return;
 
     const updatedExpenses = monthlyData.exceptionalExpenses.map(expense =>
       expense.id === id ? { ...expense, description, amount, date } : expense
     );
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       exceptionalExpenses: updatedExpenses,
     });
   };
 
-  const deleteExceptionalExpense = (id: string) => {
+  const deleteExceptionalExpense = async (id: string) => {
     if (!monthlyData) return;
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       exceptionalExpenses: monthlyData.exceptionalExpenses.filter(expense => expense.id !== id),
     });
   };
 
   // CRUD Projets
-  const addProject = (
+  const addProject = async (
     name: string,
     totalBudget: number,
     monthlyAllocation: number,
@@ -176,13 +180,13 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
       createdAt: new Date().toISOString(),
     };
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       projects: [...monthlyData.projects, newProject],
     });
   };
 
-  const updateProject = (
+  const updateProject = async (
     id: string,
     name: string,
     totalBudget: number,
@@ -197,42 +201,42 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
         : project
     );
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       projects: updatedProjects,
     });
   };
 
-  const updateProjectAllocation = (id: string, monthlyAllocation: number) => {
+  const updateProjectAllocation = async (id: string, monthlyAllocation: number) => {
     if (!monthlyData) return;
 
     const updatedProjects = monthlyData.projects.map(project =>
       project.id === id ? { ...project, monthlyAllocation } : project
     );
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       projects: updatedProjects,
     });
   };
 
-  const updateProjectStatus = (id: string, status: ProjectStatus) => {
+  const updateProjectStatus = async (id: string, status: ProjectStatus) => {
     if (!monthlyData) return;
 
     const updatedProjects = monthlyData.projects.map(project =>
       project.id === id ? { ...project, status } : project
     );
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       projects: updatedProjects,
     });
   };
 
-  const deleteProject = (id: string) => {
+  const deleteProject = async (id: string) => {
     if (!monthlyData) return;
 
-    saveMonthData({
+    await saveMonthData({
       ...monthlyData,
       projects: monthlyData.projects.filter(project => project.id !== id),
     });
@@ -242,6 +246,8 @@ export const BudgetProvider: React.FC<BudgetProviderProps> = ({ children }) => {
     currentMonth,
     monthlyData,
     calculations,
+    loading,
+    error,
     changeMonth,
     getHistory,
     updateSalary,

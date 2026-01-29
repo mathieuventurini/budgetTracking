@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { History, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { useBudget } from '../../contexts/BudgetContext';
@@ -6,42 +6,60 @@ import { formatCurrency, formatMonthShort } from '../../utils/formatters';
 import { calculateBudget } from '../../utils/calculations';
 import { MONTHS_TO_KEEP } from '../../utils/constants';
 
+interface ComparisonRow {
+  month: string;
+  revenus: number;
+  charges: number;
+  depenses: number;
+  projets: number;
+  reste: number;
+  variation: number;
+  colorStatus: string;
+}
+
 export const MonthComparison: React.FC = () => {
   const { getHistory } = useBudget();
+  const [comparisonData, setComparisonData] = useState<ComparisonRow[]>([]);
 
-  const comparisonData = useMemo(() => {
-    const history = getHistory(MONTHS_TO_KEEP);
+  useEffect(() => {
+    const loadComparisonData = async () => {
+      const history = await getHistory(MONTHS_TO_KEEP);
 
-    return history.reverse().map((monthData, index, array) => {
-      const calculations = calculateBudget(
-        monthData.salaries,
-        monthData.fixedCharges,
-        monthData.exceptionalExpenses,
-        monthData.projects
-      );
-
-      let variation = 0;
-      if (index > 0) {
-        const prevCalculations = calculateBudget(
-          array[index - 1].salaries,
-          array[index - 1].fixedCharges,
-          array[index - 1].exceptionalExpenses,
-          array[index - 1].projects
+      const data = history.reverse().map((monthData: any, index: number, array: any[]) => {
+        const calculations = calculateBudget(
+          monthData.salaries,
+          monthData.fixedCharges,
+          monthData.exceptionalExpenses,
+          monthData.projects
         );
-        variation = calculations.restToLive - prevCalculations.restToLive;
-      }
 
-      return {
-        month: formatMonthShort(monthData.month),
-        revenus: calculations.totalIncome,
-        charges: calculations.totalFixedCharges,
-        depenses: calculations.totalExceptionalExpenses,
-        projets: calculations.totalProjectsAllocated,
-        reste: calculations.restToLive,
-        variation,
-        colorStatus: calculations.colorStatus,
-      };
-    });
+        let variation = 0;
+        if (index > 0) {
+          const prevCalculations = calculateBudget(
+            array[index - 1].salaries,
+            array[index - 1].fixedCharges,
+            array[index - 1].exceptionalExpenses,
+            array[index - 1].projects
+          );
+          variation = calculations.restToLive - prevCalculations.restToLive;
+        }
+
+        return {
+          month: formatMonthShort(monthData.month),
+          revenus: calculations.totalIncome,
+          charges: calculations.totalFixedCharges,
+          depenses: calculations.totalExceptionalExpenses,
+          projets: calculations.totalProjectsAllocated,
+          reste: calculations.restToLive,
+          variation,
+          colorStatus: calculations.colorStatus,
+        };
+      });
+
+      setComparisonData(data);
+    };
+
+    loadComparisonData();
   }, [getHistory]);
 
   const getVariationIcon = (variation: number) => {

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import { Card } from '../ui/Card';
@@ -9,24 +9,31 @@ import { MONTHS_TO_KEEP } from '../../utils/constants';
 
 export const TrendChart: React.FC = () => {
   const { getHistory } = useBudget();
+  const [chartData, setChartData] = useState<Array<{ month: string; restToLive: number; totalIncome: number }>>([]);
 
-  const chartData = useMemo(() => {
-    const history = getHistory(MONTHS_TO_KEEP);
+  useEffect(() => {
+    const loadChartData = async () => {
+      const history = await getHistory(MONTHS_TO_KEEP);
 
-    return history.reverse().map(monthData => {
-      const calculations = calculateBudget(
-        monthData.salaries,
-        monthData.fixedCharges,
-        monthData.exceptionalExpenses,
-        monthData.projects
-      );
+      const data = history.reverse().map((monthData: any) => {
+        const calculations = calculateBudget(
+          monthData.salaries,
+          monthData.fixedCharges,
+          monthData.exceptionalExpenses,
+          monthData.projects
+        );
 
-      return {
-        month: formatMonthShort(monthData.month),
-        restToLive: calculations.restToLive,
-        totalIncome: calculations.totalIncome,
-      };
-    });
+        return {
+          month: formatMonthShort(monthData.month),
+          restToLive: calculations.restToLive,
+          totalIncome: calculations.totalIncome,
+        };
+      });
+
+      setChartData(data);
+    };
+
+    loadChartData();
   }, [getHistory]);
 
   const CustomTooltip = ({ active, payload }: any) => {
