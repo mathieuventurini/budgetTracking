@@ -1,14 +1,28 @@
 import React from 'react';
-import { TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, Wallet } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { useBudget } from '../../contexts/BudgetContext';
 import { formatCurrency } from '../../utils/formatters';
 
 export const RestToLiveGauge: React.FC = () => {
-  const { calculations } = useBudget();
+  const { calculations, monthlyData } = useBudget();
   const { restToLive, colorStatus, percentageRemaining } = calculations;
 
+  // Vérifie si les deux salaires ont été renseignés
+  const areSalariesEntered = monthlyData?.salaries.every(salary => salary.amount > 0) ?? false;
+
   const getStatusConfig = () => {
+    // Si les salaires ne sont pas renseignés, affiche un message neutre
+    if (!areSalariesEntered) {
+      return {
+        color: 'text-gray-500',
+        bgColor: 'bg-gray-50',
+        borderColor: 'border-gray-300',
+        icon: <Wallet size={48} />,
+        message: 'En attente des salaires',
+      };
+    }
+
     switch (colorStatus) {
       case 'success':
         return {

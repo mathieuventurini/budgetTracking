@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { MonthlyData } from '../types';
+import type { MonthlyData, Project } from '../types';
 import { STORAGE_KEY_PREFIX, MONTHS_TO_KEEP } from '../utils/constants';
 import { getCurrentMonth, getLastNMonths } from '../utils/formatters';
 
@@ -12,10 +12,35 @@ const getStorageKey = (month: string): string => {
 };
 
 /**
- * Crée des données mensuelles vides pour un mois donné
+ * Obtient le mois précédent au format YYYY-MM
  */
-const createEmptyMonthlyData = (month: string): MonthlyData => {
+const getPreviousMonth = (month: string): string => {
+  const [year, monthNum] = month.split('-').map(Number);
+  const date = new Date(year, monthNum - 1, 1);
+  date.setMonth(date.getMonth() - 1);
+
+  const prevYear = date.getFullYear();
+  const prevMonth = String(date.getMonth() + 1).padStart(2, '0');
+  return `${prevYear}-${prevMonth}`;
+};
+
+/**
+ * Crée des données mensuelles vides pour un mois donné
+ * Si le mois précédent existe, copie ses projets
+ */
+const createEmptyMonthlyData = (month: string, loadPreviousMonthData?: (month: string) => MonthlyData | null): MonthlyData => {
   const now = new Date().toISOString();
+
+  // Tente de récupérer les projets du mois précédent
+  let projectsFromPreviousMonth: Project[] = [];
+  if (loadPreviousMonthData) {
+    const previousMonth = getPreviousMonth(month);
+    const previousData = loadPreviousMonthData(previousMonth);
+    if (previousData && previousData.projects.length > 0) {
+      projectsFromPreviousMonth = previousData.projects;
+    }
+  }
+
   return {
     id: uuidv4(),
     month,
@@ -25,7 +50,7 @@ const createEmptyMonthlyData = (month: string): MonthlyData => {
     ],
     fixedCharges: [],
     exceptionalExpenses: [],
-    projects: [],
+    projects: projectsFromPreviousMonth,
     createdAt: now,
     updatedAt: now,
   };
@@ -37,6 +62,25 @@ const createEmptyMonthlyData = (month: string): MonthlyData => {
 export const useLocalStorage = () => {
   const [currentMonth, setCurrentMonth] = useState<string>(getCurrentMonth());
   const [monthlyData, setMonthlyData] = useState<MonthlyData | null>(null);
+
+  /**
+   * Charge les données d'un mois depuis le localStorage sans dépendance
+   * Utilisé pour charger le mois précédent lors de la création de nouvelles données
+   */
+  const loadMonthDataRaw = (month: string): MonthlyData | null => {
+    const key = getStorageKey(month);
+    const stored = localStorage.getItem(key);
+
+    if (stored) {
+      try {
+        return JSON.parse(stored) as MonthlyData;
+      } catch (error) {
+        console.error('Erreur lors du parsing des données:', error);
+      }
+    }
+
+    return null;
+  };
 
   /**
    * Charge les données d'un mois depuis le localStorage
@@ -53,7 +97,7 @@ export const useLocalStorage = () => {
       }
     }
 
-    return createEmptyMonthlyData(month);
+    return createEmptyMonthlyData(month, loadMonthDataRaw);
   };
 
   /**
