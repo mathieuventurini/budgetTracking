@@ -1,4 +1,3 @@
-import React from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { BudgetProvider } from './contexts/BudgetContext';
 import { MainLayout } from './components/layout/MainLayout';

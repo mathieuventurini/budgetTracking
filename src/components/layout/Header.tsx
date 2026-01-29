@@ -1,6 +1,5 @@
 import React from 'react';
 import { Wallet, History, LogOut } from 'lucide-react';
-import { Button } from '../ui/Button';
 import { useBudget } from '../../contexts/BudgetContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatMonth } from '../../utils/formatters';

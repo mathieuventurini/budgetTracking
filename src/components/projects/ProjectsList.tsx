@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FolderKanban, Plus } from 'lucide-react';
 import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { ProjectCard } from './ProjectCard';
 import { ProjectForm } from './ProjectForm';

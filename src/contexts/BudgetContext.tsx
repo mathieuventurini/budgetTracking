@@ -2,7 +2,6 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type {
   MonthlyData,
-  Salary,
   FixedCharge,
   ExceptionalExpense,
   Project,
