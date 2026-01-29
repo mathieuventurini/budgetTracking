@@ -1,7 +1,8 @@
 import React from 'react';
-import { Wallet, History } from 'lucide-react';
+import { Wallet, History, LogOut } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useBudget } from '../../contexts/BudgetContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { formatMonth } from '../../utils/formatters';
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onShowHistory, showingHistory }) => {
   const { currentMonth } = useBudget();
+  const { logout } = useAuth();
 
   return (
     <header className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500 text-white shadow-lg">
@@ -26,13 +28,23 @@ export const Header: React.FC<HeaderProps> = ({ onShowHistory, showingHistory })
             </div>
           </div>
 
-          <button
-            onClick={onShowHistory}
-            className="flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-xl backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
-          >
-            <History size={20} />
-            {showingHistory ? 'Voir le budget' : 'Historique'}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onShowHistory}
+              className="flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-xl backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
+            >
+              <History size={20} />
+              {showingHistory ? 'Voir le budget' : 'Historique'}
+            </button>
+
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl"
+              title="Se déconnecter"
+            >
+              <LogOut size={20} />
+            </button>
+          </div>
         </div>
       </div>
     </header>
